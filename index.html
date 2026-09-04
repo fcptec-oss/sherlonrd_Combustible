@@ -3,219 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Cotización — Viaje en Lowboy</title>
+    <title>Calculadora de Pulgadas a Galones</title>
     <style>
-        :root {
-            --primary-color: #1e3a8a;
-            --secondary-color: #3b82f6;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --border-color: #e2e8f0;
-            --accent-color: #059669;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
+            margin: 0;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
-
         .container {
             width: 100%;
-            max-width: 500px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 28px;
+            max-width: 400px;
         }
-
-        h2 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            font-size: 1.35rem;
-            text-align: center;
-        }
-
-        /* Form Controls */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
         label {
+            font-size: 1.2rem;
+            color: #aaa;
             display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 0.95rem;
+            margin-bottom: 10px;
         }
-
+        /* Campo para introducir las pulgadas de gran tamaño */
         input[type="number"] {
             width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input[type="number"]:focus {
-            border-color: var(--secondary-color);
-        }
-
-        /* Results Box */
-        .results-card {
-            background-color: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed var(--border-color);
-            font-size: 0.95rem;
-        }
-
-        .result-row:last-child {
-            border-bottom: none;
-        }
-
-        .result-row.total {
-            margin-top: 10px;
-            padding-top: 12px;
-            border-top: 2px solid var(--primary-color);
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .out-of-range {
-            color: #dc2626;
-            font-weight: 600;
-            padding: 10px;
-            background-color: #fef2f2;
-            border-radius: 6px;
-            border: 1px solid #fecaca;
+            padding: 15px;
+            font-size: 2rem;
             text-align: center;
-            font-size: 0.9rem;
+            background-color: #222;
+            border: 2px solid #444;
+            color: #fff;
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+        }
+        input[type="number"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .title-result {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        /* Número gigante de galones adaptado para móviles */
+        .number-display {
+            font-size: 18vw;
+            font-weight: bold;
+            color: #4CAF50;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+        @media (min-width: 600px) {
+            .number-display {
+                font-size: 5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Calculadora de Cotización — Lowboy</h2>
-    
-    <div class="form-group">
-        <label for="peso">Peso de la carga (toneladas):</label>
-        <input type="number" id="peso" value="50" min="30" max="100" step="1" oninput="calcularCotizacion()">
+    <div class="container">
+        <label for="inchesInput">Introduce las Pulgadas:</label>
+        <input type="number" id="inchesInput" placeholder="0" step="any">
+
+        <div class="title-result">Resultado en Galones:</div>
+        <div class="number-display" id="gallonsResult">0.00</div>
     </div>
 
-    <div class="form-group">
-        <label for="distancia">Distancia del viaje (km):</label>
-        <input type="number" id="distancia" value="100" min="1" step="1" oninput="calcularCotizacion()">
-    </div>
+    <script>
+        const inchesInput = document.getElementById('inchesInput');
+        const gallonsResult = document.getElementById('gallonsResult');
 
-    <div class="results-card">
-        <div id="calculo-contenido">
-            <div class="result-row">
-                <span>Rango de tonelaje:</span>
-                <strong id="res-rango">50 - 60 t</strong>
-            </div>
-            <div class="result-row">
-                <span>Tarifa por km:</span>
-                <span id="res-tarifa-km">RD$ 454.00</span>
-            </div>
-            <div class="result-row">
-                <span>Tarifa mínima:</span>
-                <span id="res-tarifa-min">RD$ 22,019.88</span>
-            </div>
-            <div class="result-row">
-                <span>Subtotal por distancia:</span>
-                <span id="res-km-distancia">RD$ 45,400.00</span>
-            </div>
-            <div class="result-row total">
-                <span>TOTAL A COBRAR:</span>
-                <span id="res-total">RD$ 45,400.00</span>
-            </div>
-        </div>
-        <div id="mensaje-error" class="out-of-range" style="display: none;">
-            El peso ingresado está fuera del rango del tarifario (30 t - 100 t).
-        </div>
-    </div>
-</div>
+        // Factor de conversión de ejemplo (Modifícalo según tu fórmula real)
+        // Ejemplo: 1 pulgada = 5.42 galones
+        const FACTOR_CONVERSION = 5.42; 
 
-<script>
-    // Configuración interna del Tarifario
-    const tarifarioData = [
-        { desde: 30, hasta: 40, tarifaKm: 398, tarifaMin: 19251.0 },
-        { desde: 40, hasta: 50, tarifaKm: 426, tarifaMin: 20588.9445 },
-        { desde: 50, hasta: 60, tarifaKm: 454, tarifaMin: 22019.876143 },
-        { desde: 60, hasta: 70, tarifaKm: 493, tarifaMin: 27000.0 },
-        { desde: 70, hasta: 80, tarifaKm: 532, tarifaMin: 29430.0 },
-        { desde: 80, hasta: 90, tarifaKm: 570, tarifaMin: 32078.7 },
-        { desde: 90, hasta: 100, tarifaKm: 610, tarifaMin: 34965.783 }
-    ];
+        // Función que se ejecuta automáticamente al escribir
+        function calcularGalones() {
+            const inches = parseFloat(inchesInput.value);
 
-    // Formateador de moneda en RD$
-    const formatter = new Intl.NumberFormat('es-DO', {
-        style: 'currency',
-        currency: 'DOP',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-
-    // Lógica de cálculo dinámico
-    function calcularCotizacion() {
-        const peso = parseFloat(document.getElementById('peso').value);
-        const distancia = parseFloat(document.getElementById('distancia').value) || 0;
-
-        const calculoContenido = document.getElementById('calculo-contenido');
-        const mensajeError = document.getElementById('mensaje-error');
-
-        // Buscar el rango correspondiente en la base de datos interna
-        const rango = tarifarioData.find(r => peso >= r.desde && peso <= r.hasta);
-
-        if (!rango || isNaN(peso)) {
-            calculoContenido.style.display = 'none';
-            mensajeError.style.display = 'block';
-            return;
+            if (isNaN(inches) || inchesInput.value === "") {
+                gallonsResult.innerText = "0.00";
+            } else {
+                // Realiza el cálculo matemático
+                const gallons = inches * FACTOR_CONVERSION;
+                // Muestra el resultado redondeado a 2 decimales
+                gallonsResult.innerText = gallons.toFixed(2);
+            }
         }
 
-        calculoContenido.style.display = 'block';
-        mensajeError.style.display = 'none';
-
-        const subtotalKm = distancia * rango.tarifaKm;
-        const total = Math.max(subtotalKm, rango.tarifaMin);
-
-        // Actualizar la interfaz
-        document.getElementById('res-rango').textContent = `${rango.desde} - ${rango.hasta} t`;
-        document.getElementById('res-tarifa-km').textContent = formatter.format(rango.tarifaKm);
-        document.getElementById('res-tarifa-min').textContent = formatter.format(rango.tarifaMin);
-        document.getElementById('res-km-distancia').textContent = formatter.format(subtotalKm);
-        document.getElementById('res-total').textContent = formatter.format(total);
-    }
-
-    // Inicializar al cargar la página
-    document.addEventListener('DOMContentLoaded', () => {
-        calcularCotizacion();
-    });
-</script>
-
+        // Escucha en tiempo real cada vez que el usuario escribe o borra
+        inchesInput.addEventListener('input', calcularGalones);
+    </script>
 </body>
 </html>
